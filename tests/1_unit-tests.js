@@ -1,9 +1,7 @@
-const chai = require('chai');
+const chai = require("chai");
 const assert = chai.assert;
 
-const Solver = require('../controllers/sudoku-solver.js');
+const { SudokuSolver } = require("../controllers");
 let solver;
 
-suite('UnitTests', () => {
-
-});
+suite("UnitTests", () => {});
