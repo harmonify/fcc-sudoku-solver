@@ -1,4 +1,8 @@
 .vscode/*
-.env
+
+*.env
+!sample.env
+
 .glitch-assets
+
 node_modules/
