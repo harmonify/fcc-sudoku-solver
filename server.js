@@ -35,6 +35,7 @@ app.route("/").get(function (req, res) {
 
 database(process.env.MONGO_URI)
   .then(async (db) => {
+    console.log("Database connected");
     //For FCC testing purposes
     fccTestingRoutes(app);
 
