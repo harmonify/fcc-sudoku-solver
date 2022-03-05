@@ -10,8 +10,8 @@ suite("UnitTests", () => {
       "135762984946381257728459613694517832812936745357824196473298561581673429269145378";
     const puzzle2 =
       "...762984946381257728459613694517832812936745357824..647329856158167342926914..78";
-    assert.equal(solver.validate(puzzle1), true);
-    assert.equal(solver.validate(puzzle2), true);
+    assert.equal(solver.validatePuzzle(puzzle1), true);
+    assert.equal(solver.validatePuzzle(puzzle2), true);
   });
 
   test("Logic handles a puzzle string with invalid characters (not 1-9 or .)", () => {
@@ -19,16 +19,28 @@ suite("UnitTests", () => {
       "a357629849463812577284596136945178328129367453578241964732985615816734...69145378";
     const puzzle2 =
       "1p5762984946381257728459613694517832812936745g57824196473298561581673429269145378";
-    assert.equal(solver.validate(puzzle1), "Invalid value");
-    assert.equal(solver.validate(puzzle2), "Invalid value");
+    assert.equal(
+      solver.validatePuzzle(puzzle1),
+      "Invalid characters in puzzle"
+    );
+    assert.equal(
+      solver.validatePuzzle(puzzle2),
+      "Invalid characters in puzzle"
+    );
   });
 
   test("Logic handles a puzzle string that is not 81 characters in length", () => {
     const puzzle1 = "1357.....";
     const puzzle2 =
       "....abc4517832812936745357824196473298561581673429269145378";
-    assert.equal(solver.validate(puzzle1), "Invalid length");
-    assert.equal(solver.validate(puzzle2), "Invalid length");
+    assert.equal(
+      solver.validatePuzzle(puzzle1),
+      "Expected puzzle to be 81 characters long"
+    );
+    assert.equal(
+      solver.validatePuzzle(puzzle2),
+      "Expected puzzle to be 81 characters long"
+    );
   });
 
   test("Logic handles a valid row placement", () => {
@@ -92,15 +104,26 @@ suite("UnitTests", () => {
   });
 
   test("Valid puzzle strings pass the solver", () => {
-    const puzzle1 =
-      "1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.";
-    const puzzle2 =
-      "5..91372.3...8.5.9.9.25..8.68.47.23...95..46.7.4.....5.2.......4..8916..85.72...3";
-    const puzzle3 =
-      "1................................................................................";
-    assert.notEqual(solver.solve(puzzle1), "Invalid length");
-    assert.notEqual(solver.solve(puzzle2), "Invalid value");
-    assert.notEqual(solver.solve(puzzle3), "Invalid length");
+    assert.equal(
+      solver.solve(puzzlesAndSolutions[0][0]),
+      puzzlesAndSolutions[0][1]
+    );
+    assert.equal(
+      solver.solve(puzzlesAndSolutions[1][0]),
+      puzzlesAndSolutions[1][1]
+    );
+    assert.equal(
+      solver.solve(puzzlesAndSolutions[2][0]),
+      puzzlesAndSolutions[2][1]
+    );
+    assert.equal(
+      solver.solve(puzzlesAndSolutions[3][0]),
+      puzzlesAndSolutions[3][1]
+    );
+    assert.equal(
+      solver.solve(puzzlesAndSolutions[4][0]),
+      puzzlesAndSolutions[4][1]
+    );
   });
 
   test("Invalid puzzle strings fail the solver", () => {
@@ -109,9 +132,9 @@ suite("UnitTests", () => {
     const puzzle2 =
       "asd762984946381257728459613694517832812936745357824196473298561581673429269145378";
     const puzzle3 = "1.......asdf............234234234234234..";
-    assert.equal(solver.solve(puzzle1), "Invalid length");
-    assert.equal(solver.solve(puzzle2), "Invalid value");
-    assert.equal(solver.solve(puzzle3), "Invalid length");
+    assert.equal(solver.solve(puzzle1), false);
+    assert.equal(solver.solve(puzzle2), false);
+    assert.equal(solver.solve(puzzle3), false);
   });
 
   test("Solver returns the expected solution for an incomplete puzzle", () => {
