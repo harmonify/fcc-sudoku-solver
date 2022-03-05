@@ -2,12 +2,13 @@
 
 module.exports = function (err, req, res, next) {
   if (process.env.NODE_ENV !== "production") {
-    console.error(err.name, {
-      error: err.message,
-    });
+    console.error(err);
+    // console.error(err.name, {
+    //   error: err.message,
+    // });
   }
-  if (error.statusCode && error.statusCode !== 500) {
-    res.status(error.statusCode).json({ error: error.message });
+  if (err.statusCode && err.statusCode !== 500) {
+    res.status(err.statusCode).json({ error: err.message });
     return;
   }
   res.status(500).json({ error: "Internal server error" });
