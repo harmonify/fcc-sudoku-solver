@@ -113,7 +113,7 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "2" })
+      .send({ puzzle: puzzlesAndSolutions[0][1], coordinate: "A1", value: "2" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
@@ -127,7 +127,7 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "3" })
+      .send({ puzzle: puzzlesAndSolutions[0][1], coordinate: "A1", value: "3" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
@@ -141,7 +141,7 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "4" })
+      .send({ puzzle: puzzlesAndSolutions[0][1], coordinate: "A1", value: "4" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");

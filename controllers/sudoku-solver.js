@@ -1,11 +1,6 @@
 "use strict";
 
 class SudokuSolver {
-  constructor(timeout = 5000) {
-    this.startTime = new Date();
-    this.timeout = timeout;
-  }
-
   validateValue(value) {
     return /^[1-9]$/.test(value) ? true : "Invalid value";
   }
@@ -34,7 +29,7 @@ class SudokuSolver {
       return coordinateValidated;
     }
     return [
-      coordinateValidated.charCodeAt(0) - 66,
+      coordinateValidated.charCodeAt(0) - 65,
       parseInt(coordinateValidated.charAt(1)) - 1,
     ];
   }
@@ -121,7 +116,6 @@ class SudokuSolver {
       return false;
     }
     const grid = this.transform(puzzleString);
-    // omitting 2 optional param to solve it from the beginning
     const resultArr = this.solveSudoku(grid, 0, 0);
     if (!resultArr) {
       return false;
@@ -130,11 +124,6 @@ class SudokuSolver {
   }
 
   solveSudoku(grid, row, col) {
-    // break out of this function if it took too long
-    if (Date.now() - this.startTime > this.timeout) {
-      return false;
-    }
-
     // base case
     if (col == 9) {
       if (row == 8) {
