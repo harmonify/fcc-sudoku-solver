@@ -29,7 +29,6 @@ module.exports = function (app) {
 
       // check for placement conflicts
       const [row, column] = rowAndColumn;
-      console.log(row, column);
       const conflict = [];
       if (!solver.checkRowPlacement(puzzle, row, column, value)) {
         conflict.push("row");
@@ -49,11 +48,6 @@ module.exports = function (app) {
       // if no conflict, then the placement is valid
       res.json({ valid: true });
     } catch (error) {
-      // if (error.statusCode && error.statusCode !== 500) {
-      //   res.status(error.statusCode).json({ error: error.message });
-      //   return;
-      // }
-      // res.status(500).json({ error: "Internal server error" });
       next(error);
     }
   });
