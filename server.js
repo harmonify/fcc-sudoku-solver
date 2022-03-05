@@ -33,41 +33,34 @@ app.route("/").get(function (req, res) {
   res.sendFile(process.cwd() + "/views/index.html");
 });
 
-database(process.env.MONGO_URI)
-  .then(async (db) => {
-    console.log("Database connected");
-    //For FCC testing purposes
-    fccTestingRoutes(app);
+//For FCC testing purposes
+fccTestingRoutes(app);
 
-    // User routes
-    apiRoutes(app);
+// User routes
+apiRoutes(app);
 
-    //Error Handler Middleware
-    app.use(errorHandler);
+//Error Handler Middleware
+app.use(errorHandler);
 
-    //404 Not Found Middleware
-    app.use(notFoundHandler);
+//404 Not Found Middleware
+app.use(notFoundHandler);
 
-    //Start our server and tests!
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, function () {
-      console.log("Listening on port " + PORT);
-      // process.env.NODE_ENV='test'
-      if (process.env.NODE_ENV === "test") {
-        console.log("Running Tests...");
-        setTimeout(function () {
-          try {
-            runner.run();
-          } catch (error) {
-            console.log("Tests are not valid:");
-            console.error(error);
-          }
-        }, 1500);
+//Start our server and tests!
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, function () {
+  console.log("Listening on port " + PORT);
+  // process.env.NODE_ENV='test'
+  if (process.env.NODE_ENV === "test") {
+    console.log("Running Tests...");
+    setTimeout(function () {
+      try {
+        runner.run();
+      } catch (error) {
+        console.log("Tests are not valid:");
+        console.error(error);
       }
-    });
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+    }, 1500);
+  }
+});
 
 module.exports = app; // for testing
