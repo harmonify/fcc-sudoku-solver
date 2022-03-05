@@ -1,44 +1,46 @@
 "use strict";
 
-const { puzzlesAndSolutions } = require("./puzzle-strings");
-
 class SudokuSolver {
-  validateLength(value) {
-    return value.length === 81;
+  constructor(timeout = 5000) {
+    this.startTime = new Date();
+    this.timeout = timeout;
   }
 
   validateValue(value) {
-    return /^[1-9\.]+$/.test(value);
+    return /^[1-9]$/.test(value) ? true : "Invalid value";
   }
 
-  validate(puzzleString) {
-    if (!this.validateLength(puzzleString)) {
-      return "Invalid length";
+  validatePuzzle(puzzleString) {
+    if (puzzleString && puzzleString.length !== 81) {
+      return "Expected puzzle to be 81 characters long";
     }
-    if (!this.validateValue(puzzleString)) {
-      return "Invalid value";
+    if (!/^[1-9\.]+$/.test(puzzleString)) {
+      return "Invalid characters in puzzle";
     }
     return true;
   }
 
-  parseCoordinate(coordinate) {
-    const coordinateValidated = this._validateCoordinate(coordinate);
-    if (coordinateValidated !== true) {
-      return coordinateValidated;
-    }
-    const [row, column] = coordinateValidated;
-    return [row.charCodeAt(0) - 65, column - 1];
-  }
-
-  _validateCoordinate(coordinate) {
-    const result = /^[A-Z][1-9]$/.exec(coordinate);
+  validateCoordinate(coordinate) {
+    const result = coordinate.match(/^[A-I][1-9]$/);
     if (!result) {
       return "Invalid coordinate";
     }
-    return true;
+    return result;
+  }
+
+  parseCoordinate(coordinate) {
+    const coordinateValidated = this.validateCoordinate(coordinate).toString();
+    if (coordinateValidated === "Invalid coordinate") {
+      return coordinateValidated;
+    }
+    return [
+      coordinateValidated.charCodeAt(0) - 66,
+      parseInt(coordinateValidated.charAt(1)) - 1,
+    ];
   }
 
   checkColPlacement(puzzleString, row, column, value) {
+    // return true if there is no placement conflict, false otherwise
     const valueStr = value.toString();
     const colArr = [];
     for (let i = 0; i < 9; i++) {
@@ -53,6 +55,7 @@ class SudokuSolver {
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
+    // return true if there is no placement conflict, false otherwise
     const valueStr = value.toString();
     const rowArr = puzzleString.substring(row * 9, row * 9 + 9).split("");
 
@@ -64,6 +67,7 @@ class SudokuSolver {
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
+    // return true if there is no placement conflict, false otherwise
     const valueStr = value.toString();
     const rowStart = Math.floor(row / 3) * 3;
     const colStart = Math.floor(column / 3) * 3;
@@ -113,20 +117,24 @@ class SudokuSolver {
   }
 
   solve(puzzleString) {
-    const validated = this.validate(puzzleString);
-    if (validated !== true) {
-      return validated;
+    if (this.validatePuzzle(puzzleString) !== true) {
+      return false;
     }
     const grid = this.transform(puzzleString);
     // omitting 2 optional param to solve it from the beginning
-    const resultArr = this.solveSudoku(grid);
+    const resultArr = this.solveSudoku(grid, 0, 0);
     if (!resultArr) {
       return false;
     }
     return this.transformBack(resultArr);
   }
 
-  solveSudoku(grid, row = 0, col = 0) {
+  solveSudoku(grid, row, col) {
+    // break out of this function if it took too long
+    if (Date.now() - this.startTime > this.timeout) {
+      return false;
+    }
+
     // base case
     if (col == 9) {
       if (row == 8) {
@@ -161,6 +169,8 @@ class SudokuSolver {
       // if the candidate is not valid, reset the grid
       grid[row][col] = ".";
     }
+
+    // no valid candidate, return false
     return false;
   }
 }
