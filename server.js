@@ -16,7 +16,6 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const runner = require("./test-runner");
-const database = require("./database");
 const { apiRoutes, fccTestingRoutes } = require("./routes");
 const { errorHandler, loggerDev, notFoundHandler } = require("./middlewares");
 
