@@ -2,13 +2,12 @@ const chai = require("chai");
 const chaiHttp = require("chai-http");
 const assert = chai.assert;
 
+const { puzzlesAndSolutions } = require("../controllers");
 const server = require("../server");
 
 chai.use(chaiHttp);
 
 suite("Functional Tests", () => {
-  this.timeout(5000);
-
   const apiSolve = "/api/solve";
   const apiCheck = "/api/check";
 
@@ -16,11 +15,15 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiSolve)
-      .send({})
+      .send({ puzzle: puzzlesAndSolutions[0][0] })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(
+          res.body.solution,
+          puzzlesAndSolutions[0][1],
+          "Server should return the solution"
+        );
         done();
       });
   });
@@ -33,7 +36,7 @@ suite("Functional Tests", () => {
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.error, "Required field missing");
         done();
       });
   });
@@ -42,11 +45,14 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiSolve)
-      .send({})
+      .send({
+        puzzle:
+          "a357629849463812577284596136945178328129367453578241964732985615816734...69145378",
+      })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.error, "Invalid characters in puzzle");
         done();
       });
   });
@@ -55,24 +61,33 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiSolve)
-      .send({})
+      .send({
+        puzzle: "....4517832812936745357824196473298561581673429269145378",
+      })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(
+          res.body.error,
+          "Expected puzzle to be 81 characters long"
+        );
         done();
       });
   });
 
   test("Solve a puzzle that cannot be solved: POST request to /api/solve", function (done) {
+    // TODO:
     chai
       .request(server)
       .post(apiSolve)
-      .send({})
+      .send({
+        puzzle:
+          "1.34567891.......................................................................",
+      })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.error, "Puzzle cannot be solved");
         done();
       });
   });
@@ -81,11 +96,15 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "1" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(
+          res.body.valid,
+          true,
+          "Server should return a valid property of true"
+        );
         done();
       });
   });
@@ -94,11 +113,12 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "2" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.valid, false, "Server should return a valid property of false");
+        assert.equal(res.body.conflict.length, 1, "Server should return a conflict array with length 1");
         done();
       });
   });
@@ -107,11 +127,12 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "3" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.valid, false, "Server should return a valid property of false");
+        assert.equal(res.body.conflict.length, 2, "Server should return a conflict array with length 2");
         done();
       });
   });
@@ -120,11 +141,13 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "4" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.valid, false, "Server should return a valid property of false");
+        assert.equal(res.body.conflict.length, 3, "Server should return a conflict array with length 3");
+
         done();
       });
   });
@@ -133,11 +156,11 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({ puzzle: puzzlesAndSolutions[0][0] })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.error, "Required field(s) missing");
         done();
       });
   });
@@ -146,11 +169,16 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({
+        puzzle:
+          "a35762984946381257728459613694517832812936745357824196473298561581673429269145378",
+        coordinate: "A1",
+        value: "1",
+      })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.error, "Invalid characters in puzzle");
         done();
       });
   });
@@ -159,11 +187,18 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({
+        puzzle: "....4517832812936745357824196473298561581673429269145378",
+        coordinate: "A1",
+        value: "1",
+      })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(
+          res.body.error,
+          "Expected puzzle to be 81 characters long"
+        );
         done();
       });
   });
@@ -172,11 +207,15 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({
+        puzzle: puzzlesAndSolutions[0][0],
+        coordinate: "A10",
+        value: "1",
+      })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.error, "Invalid coordinate");
         done();
       });
   });
@@ -185,11 +224,11 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({})
+      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A1", value: "0" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.fail("NotImplemented");
+        assert.equal(res.body.error, "Invalid value");
         done();
       });
   });
