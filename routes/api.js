@@ -9,6 +9,7 @@ module.exports = function (app) {
   app.route("/api/check").post((req, res, next) => {
     try {
       const { puzzle, coordinate, value } = req.body;
+      console.log(req.body);
       if (!(puzzle && coordinate && value)) {
         throw new ErrorStatus("Required field(s) missing", 200);
       }
@@ -34,7 +35,7 @@ module.exports = function (app) {
         conflict.push("row");
       }
       if (!solver.checkColPlacement(puzzle, row, column, value)) {
-        conflict.push("col");
+        conflict.push("column");
       }
       if (!solver.checkRegionPlacement(puzzle, row, column, value)) {
         conflict.push("region");
