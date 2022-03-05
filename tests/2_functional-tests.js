@@ -82,9 +82,9 @@ suite("Functional Tests", () => {
       .post(apiSolve)
       .send({
         puzzle:
-          "1.34567891.......................................................................",
+          "5..91372.3...8.5.9.9.25778.68.47.23...95..46.7.4.....5.2.......4..8916..85.72...3",
       })
-      .end(function (err, res) {
+      .end((err, res) => {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
         assert.equal(res.body.error, "Puzzle cannot be solved");
@@ -112,13 +112,21 @@ suite("Functional Tests", () => {
   test("Check a puzzle placement with single placement conflict: POST request to /api/check", function (done) {
     chai
       .request(server)
-      .post(apiCheck)
-      .send({ puzzle: puzzlesAndSolutions[0][1], coordinate: "A1", value: "2" })
+      .post(apiCheck) 
+      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "E1", value: "1" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.equal(res.body.valid, false, "Server should return a valid property of false");
-        assert.equal(res.body.conflict.length, 1, "Server should return a conflict array with length 1");
+        assert.equal(
+          res.body.valid,
+          false,
+          "Server should return a valid property of false"
+        );
+        assert.equal(
+          res.body.conflict.length,
+          1,
+          "Server should return a conflict array with length 1"
+        );
         done();
       });
   });
@@ -127,12 +135,20 @@ suite("Functional Tests", () => {
     chai
       .request(server)
       .post(apiCheck)
-      .send({ puzzle: puzzlesAndSolutions[0][1], coordinate: "A1", value: "3" })
+      .send({ puzzle: puzzlesAndSolutions[0][0], coordinate: "A9", value: "1" })
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.equal(res.body.valid, false, "Server should return a valid property of false");
-        assert.equal(res.body.conflict.length, 2, "Server should return a conflict array with length 2");
+        assert.equal(
+          res.body.valid,
+          false,
+          "Server should return a valid property of false"
+        );
+        assert.equal(
+          res.body.conflict.length,
+          2,
+          "Server should return a conflict array with length 2"
+        );
         done();
       });
   });
@@ -145,8 +161,16 @@ suite("Functional Tests", () => {
       .end(function (err, res) {
         if (err) done(err);
         assert.equal(res.status, 200, "Server should return status code 200");
-        assert.equal(res.body.valid, false, "Server should return a valid property of false");
-        assert.equal(res.body.conflict.length, 3, "Server should return a conflict array with length 3");
+        assert.equal(
+          res.body.valid,
+          false,
+          "Server should return a valid property of false"
+        );
+        assert.equal(
+          res.body.conflict.length,
+          3,
+          "Server should return a conflict array with length 3"
+        );
 
         done();
       });
